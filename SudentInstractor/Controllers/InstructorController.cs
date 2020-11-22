@@ -28,13 +28,15 @@ namespace SudentInstractor.Controllers
         public IActionResult Create()
         {
 
-            ViewBag.Courses = _dbc.Courses.ToList();
+            ViewBag.Course = _dbc.Courses.ToList();
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Instructor instructor,int courseId)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Instructor instructor, int courseId)
         {
-       
+            if (ModelState.IsValid)
+            {
                 instructor.Id = _dbc.Instructors.Last().Id + 1;
                 instructor.Course = _dbc.Courses.Find(courseId);
 
@@ -43,7 +45,10 @@ namespace SudentInstractor.Controllers
 
                 return RedirectToAction("Index");
             }
+            return View(instructor);
+        }
      
+
         public IActionResult Details(int? id)
         {
             Instructor instructor = _dbc.Instructors.Where(i => i.Id == id).FirstOrDefault();
@@ -63,18 +68,52 @@ namespace SudentInstractor.Controllers
         {
             Instructor instructor = _dbc.Instructors
                .Where(i => i.Id == id)
+               .Include(i=>i.Course)
                .FirstOrDefault();
-            ViewBag.Courses = _dbc.Courses.ToList();
+            ViewBag.Course = _dbc.Courses.ToList();
            
 
-            ViewBag.CourseId = instructor.Course.Id;
+            ViewBag.Course.Id = instructor.Course.Id;
 
             _dbc.SaveChanges();
             return View(instructor);
 
         }
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Instructor inst)
+        {
 
-        [HttpGet]
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+
+                    var instructor = _dbc.Instructors.Where(i => i.Id == inst.Id).FirstOrDefault();
+                    if (inst != null)
+                    {
+                        instructor.Id = inst.Id;
+                        instructor.FirstName = inst.FirstName;
+                        instructor.LastName = inst.LastName;
+                        instructor.Email = inst.Email;
+
+                        _dbc.Instructors.Remove(instructor);
+                        _dbc.Instructors.Add(inst);
+                        _dbc.SaveChanges();
+                    }
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (DataMisalignedException)
+            {
+
+                ModelState.AddModelError("", "Unable to save changes. Try again");
+            }
+            return View(inst);
+            }
+
+            [HttpGet]
         public IActionResult Delete(int? id)
         {
             Instructor instr = _dbc.Instructors.Where(i => i.Id == id).FirstOrDefault();
@@ -83,12 +122,13 @@ namespace SudentInstractor.Controllers
         }
         [HttpPost,ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int ?id)
         {
            
             
                 Instructor instr = _dbc.Instructors.Where(i => i.Id == id).FirstOrDefault();
                 _dbc.Instructors.Remove(instr);
+              
                 _dbc.SaveChanges();
            
             return RedirectToAction("Index");

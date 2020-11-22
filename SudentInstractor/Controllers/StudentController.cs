@@ -24,7 +24,10 @@ namespace SudentInstractor.Controllers
         public IActionResult Details(int id)
         {
             Student student = _dbc.Students.Where(s => s.StudentID == id).FirstOrDefault();
-           
+            if (student == null)
+            {
+                return HttpNotFound();
+            }
             List<Course> courses = _dbc.StudentCourses
                 .Where(sc => sc.StudentId == id)
                 .Select(c => c.Course)
@@ -32,15 +35,22 @@ namespace SudentInstractor.Controllers
              ViewBag.Courses = courses;
             return View(student);
         }
-        
+
+        private IActionResult HttpNotFound()
+        {
+            throw new NotImplementedException();
+        }
 
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Courses = _dbc.Courses.ToList();
+
             return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(Student student)
         {
 
@@ -58,7 +68,8 @@ namespace SudentInstractor.Controllers
 
         public IActionResult Edit(int id)
         {
-            Student student = _dbc.Students.Where(s => s.StudentID == id).FirstOrDefault();
+            
+            Student std = _dbc.Students.Where(s => s.StudentID == id).FirstOrDefault();
 
             List<Course> courses = _dbc.StudentCourses
                 .Where(sc => sc.StudentId == id)
@@ -71,13 +82,48 @@ namespace SudentInstractor.Controllers
                 .Except(courses)
                 .ToList();
 
-            return View(student);
+            return View(std);
+        }
+        [HttpPost,ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Student std)
+        {
+          
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+
+                    var student = _dbc.Students.Where(s => s.StudentID == std.StudentID).FirstOrDefault();
+                    if (std != null)
+                    {
+                        student.StudentID = std.StudentID;
+                        student.FirstName = std.FirstName;
+                        student.LastName = std.LastName;
+                        student.Email = std.Email;
+                        student.Phone = std.Phone;
+
+                        _dbc.Students.Remove(student);
+                        _dbc.Students.Add(std);
+                        _dbc.SaveChanges();
+                    }
+                    return RedirectToAction("Index");
+                }
+            }
+            catch(DataMisalignedException)
+            {
+
+                ModelState.AddModelError("", "Unable to save changes. Try again");
+            }
+
+            return View(std);
         }
 
 
 
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(int? id, bool? saveChangesError = false)
 
         {
             if (id == null)
@@ -85,10 +131,22 @@ namespace SudentInstractor.Controllers
                 return NotFound();
             }
 
+
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewBag.ErrorMessage = "Delete failed. Try again.";
+            }
+
             Student st = _dbc.Students.Where(s => s.StudentID == id).FirstOrDefault();
+
+            if (st == null)
+            {
+                return HttpNotFound();
+            }
 
             return View(st);
         }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -100,6 +158,12 @@ namespace SudentInstractor.Controllers
 
             return RedirectToAction("Index");
 
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _dbc.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

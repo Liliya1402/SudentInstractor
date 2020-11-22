@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage;
 using SudentInstractor.Data;
 using SudentInstractor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+
 
 namespace SudentInstractor.Controllers
 {
@@ -30,24 +33,30 @@ namespace SudentInstractor.Controllers
 
             return View(_dbCollege.Courses.Where(c => c.Id == id).FirstOrDefault());
         }
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit(Course course)
         {
-            Course cr = _dbCollege.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
 
-            if (cr != null)
+
+            if (ModelState.IsValid)
             {
-                cr.Id = course.Id;
-                cr.Name = course.Name;
-                cr.CourseNo = course.CourseNo;
-                cr.Description = course.Description;
+                Course cr = _dbCollege.Courses.Where(c => c.Id == course.Id).FirstOrDefault();
 
+                if (cr != null)
+                {
+                    cr.Id = course.Id;
+                    cr.Name = course.Name;
+                    cr.CourseNo = course.CourseNo;
+                    cr.Description = course.Description;
+                    _dbCollege.Courses.Remove(cr);
+                    _dbCollege.Courses.Add(course);
+                    _dbCollege.SaveChanges();
+                }
 
-
-                _dbCollege.SaveChanges();
+                return RedirectToAction("Index");
             }
-
-            return RedirectToAction("Index");
+            return View(course);
         }
 
         [HttpGet]
@@ -69,20 +78,37 @@ namespace SudentInstractor.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(int? id, bool? saveChangesError = false)
         {
-            Course cur = _dbCollege.Courses.Where(c => c.Id == id).FirstOrDefault();
+           
 
-            return ViewBag(cur);
+            Course course = _dbCollege.Courses.Where(c => c.Id == id).FirstOrDefault();
+
+            return View(course);
         }
-        [HttpPost]
-        public IActionResult Delete(int id)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
         {
-            Course cur = _dbCollege.Courses.Where(c => c.Id == id).FirstOrDefault();
-            _dbCollege.Remove(cur);
-            _dbCollege.SaveChanges();
+           
+           
+                     Course cur = _dbCollege.Courses.Where(c => c.Id == id).FirstOrDefault();
+                _dbCollege.Remove(cur);
+                _dbCollege.SaveChanges();
+           
+        
+          
+                return RedirectToAction("Delete", new { Id = id, saveChangesError = true });
+            }
 
-            return RedirectToAction("Index");
+            
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _dbCollege.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

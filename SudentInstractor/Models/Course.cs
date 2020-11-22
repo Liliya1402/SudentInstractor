@@ -9,7 +9,7 @@ namespace SudentInstractor.Models
 {
     public class Course
     {
-       
+       [Key]
         public int Id { get; set; }
 
         [Display(Name ="Course Number")]
