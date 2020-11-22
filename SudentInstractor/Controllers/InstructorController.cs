@@ -70,10 +70,10 @@ namespace SudentInstractor.Controllers
                .Where(i => i.Id == id)
                .Include(i=>i.Course)
                .FirstOrDefault();
-            ViewBag.Course = _dbc.Courses.ToList();
+            ViewBag.Courses = _dbc.Courses.ToList();
            
 
-            ViewBag.Course.Id = instructor.Course.Id;
+            ViewBag.CourseId = instructor.Course.Id;
 
             _dbc.SaveChanges();
             return View(instructor);
