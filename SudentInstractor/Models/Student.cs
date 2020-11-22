@@ -15,7 +15,7 @@ namespace SudentInstractor.Models
 
 
         [Display(Name = "First Name")]
-        [Required(ErrorMessage = "Enter your Last  Name")]
+        [Required(ErrorMessage = "Enter your First  Name")]
         public string FirstName { get; set; }
 
         [Display(Name = "Last Name")]
