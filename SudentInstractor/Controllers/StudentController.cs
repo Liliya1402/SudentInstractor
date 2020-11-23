@@ -86,6 +86,7 @@ namespace SudentInstractor.Controllers
         }
         [HttpPost,ActionName("Edit")]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult Edit(Student std)
         {
           

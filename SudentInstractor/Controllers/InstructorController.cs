@@ -28,7 +28,7 @@ namespace SudentInstractor.Controllers
         public IActionResult Create()
         {
 
-            ViewBag.Course = _dbc.Courses.ToList();
+            ViewBag.Courses = _dbc.Courses.ToList();
             return View();
         }
         [HttpPost]
@@ -62,18 +62,28 @@ namespace SudentInstractor.Controllers
             return View(instructor);
         }
 
+        //public IActionResult Edit(int ?id)
+        //{
+        //    ViewBag.Courses = _dbc.Courses.ToList();
+        //    Instructor instructor = _dbc.Instructors
+        //        .Where(i => i.Id == id)
+        //        .FirstOrDefault();
 
+        //    ViewBag.CourseId = instructor.Course.Id;
 
-        public IActionResult Edit(int id)
+        //    return View(instructor);
+        //}
+
+        public IActionResult Edit(int? id)
         {
             Instructor instructor = _dbc.Instructors
                .Where(i => i.Id == id)
-               .Include(i=>i.Course)
+               .Include(i => i.Course)
                .FirstOrDefault();
             ViewBag.Courses = _dbc.Courses.ToList();
-           
 
-            ViewBag.CourseId = instructor.Course.Id;
+           
+            ViewBag.CourseId = instructor.Course;
 
             _dbc.SaveChanges();
             return View(instructor);
@@ -111,9 +121,9 @@ namespace SudentInstractor.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again");
             }
             return View(inst);
-            }
+        }
 
-            [HttpGet]
+        [HttpGet]
         public IActionResult Delete(int? id)
         {
             Instructor instr = _dbc.Instructors.Where(i => i.Id == id).FirstOrDefault();
