@@ -95,11 +95,12 @@ namespace SudentInstractor.Controllers
                      Course cur = _dbCollege.Courses.Where(c => c.Id == id).FirstOrDefault();
                 _dbCollege.Remove(cur);
                 _dbCollege.SaveChanges();
-           
-        
-          
-                return RedirectToAction("Delete", new { Id = id, saveChangesError = true });
-            }
+         
+
+          //  return RedirectToPage("Index");
+
+             return RedirectToAction("Delete", new { Id = id, saveChangesError = true });
+        }
 
             
         protected override void Dispose(bool disposing)

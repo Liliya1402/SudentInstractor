@@ -6,21 +6,28 @@
 
 <h1>Students List</h1>
 
+@*<p>
+        <a asp-action="Create">Register New</a>
+    </p>*@
+
 <p>
-    <a asp-action="Create">Register New</a>
+    <div class="col-sm-4">
+        <a asp-action="Create" class="btn btn-info create"><i class="fa fa-plus"></i> Add New</a>
+
+    </div>
 </p>
 <table class="table">
     <thead>
         <tr>
             @*<th>
-                Html.DisplayNameFor(model => model.StudentID)
-            </th>*@
+                    Html.DisplayNameFor(model => model.StudentID)
+                </th>*@
             <th>
-         
+
                 @Html.DisplayNameFor(model => model.FirstName)
             </th>
             <th>
-               
+
                 @Html.DisplayNameFor(model => model.LastName)
             </th>
             <th>
@@ -33,29 +40,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.StudentID)
-            </td*@
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {  id=item.StudentID }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.StudentID }) |
-                @Html.ActionLink("Delete", "Delete", new {  id=item.StudentID  })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.StudentID)
+                    </td*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.StudentID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.StudentID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.StudentID })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
