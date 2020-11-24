@@ -9,7 +9,7 @@ namespace SudentInstractor.Models
 {
     public class Course
     {
-       
+       [Key]
         public int Id { get; set; }
 
         [Display(Name ="Course Number")]
@@ -20,6 +20,7 @@ namespace SudentInstractor.Models
         [Display(Name = "Course Name")]
         [Required(ErrorMessage = "Enter Course Name")]
         public string Name { get; set; }
+        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
          List<Instructor> Instructors {  set; get; }
          List<StudentCourse> StudentCourses { set; get; }

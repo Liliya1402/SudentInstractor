@@ -9,7 +9,7 @@ using SudentInstractor.Data;
 namespace SudentInstractor.Migrations
 {
     [DbContext(typeof(CollegeDbCotext))]
-    [Migration("20201121015906_Initial")]
+    [Migration("20201123012321_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,7 +68,8 @@ namespace SudentInstractor.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired();
 
                     b.Property<string>("LastName")
                         .IsRequired();

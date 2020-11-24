@@ -66,7 +66,8 @@ namespace SudentInstractor.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired();
 
                     b.Property<string>("LastName")
                         .IsRequired();
